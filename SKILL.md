@@ -1,83 +1,47 @@
 ---
-name: zai-skill
-description: 智谱 AI 多模态视觉分析能力，提供 UI 转代码、OCR、错误诊断、技术图表理解等 8 个工具
+name: zai-vision
+description: Dynamic access to zai-vision MCP server (8 tools, transport: stdio)
 ---
 
-# zai-mcp Skill
+# zai-vision Skill
 
-智谱 AI 多模态视觉分析技能，提供从 UI 截图到代码生成、OCR 文字提取、错误诊断、技术图表理解等全方位的视觉分析能力。
+This skill provides dynamic access to the zai-vision MCP server with progressive disclosure loading.
+
+## Transport Protocol
+
+**Protocol**: Standard Input/Output (stdio)
+
+
 
 ## Context Efficiency
 
-传统 MCP 方式：
-- 所有 8 个工具在启动时加载
-- 预估上下文消耗：4000+ tokens
+Traditional MCP approach:
+- All 8 tools loaded at startup
+- Estimated context: 4000 tokens
 
-本技能方式：
-- 元数据仅：~150 tokens
-- 完整指令（使用时）：~6k tokens
-- 工具执行：0 tokens（外部运行）
+This skill approach:
+- Metadata only: ~150 tokens
+- Full instructions (when used): ~5k tokens
+- Tool execution: 0 tokens (runs externally)
 
 ## Available Tools
 
-### UI & Design Tools
-
-**`ui_to_artifact`** - 将 UI 截图转换为代码、提示词、设计规范或自然语言描述
-
-参数：
-- `image_source` (string, required): 本地文件路径或远程 URL
-- `output_type` (string, required): 输出类型 - `code`/`prompt`/`spec`/`description`
-- `prompt` (string, required): 详细指令，说明要生成什么
-
-**`ui_diff_check`** - 对比两张 UI 截图，识别视觉差异和实现偏差
-
-### Text & Code Extraction
-
-**`extract_text_from_screenshot`** - 使用先进的 OCR 能力从截图中提取和识别文字
-
-参数：
-- `image_source` (string, required): 本地文件路径或远程 URL
-
-### Error Diagnosis
-
-**`diagnose_error_screenshot`** - 解析错误弹窗、堆栈和日志截图，给出定位与修复建议
-
-参数：
-- `image_source` (string, required): 本地文件路径或远程 URL
-
-### Technical Diagrams
-
-**`understand_technical_diagram`** - 针对架构图、流程图、UML、ER 图等技术图纸生成结构化解读
-
-参数：
-- `image_source` (string, required): 本地文件路径或远程 URL
-
-### Data Analysis
-
-**`analyze_data_visualization`** - 阅读仪表盘、统计图表，提炼趋势、异常与业务要点
-
-参数：
-- `image_source` (string, required): 本地文件路径或远程 URL
-
-### General Analysis
-
-**`analyze_image`** - 通用图像理解能力，适配未被专项工具覆盖的视觉内容
-
-参数：
-- `image_source` (string, required): 本地文件路径或远程 URL
-
-**`analyze_video`** - 支持 MP4/MOV/M4V（限制本地最大 8M）等格式的视频场景解析
-
-参数：
-- `video_source` (string, required): 本地文件路径或远程 URL
+**`ui_to_artifact`** - Convert UI screenshots into various artifacts: code, prompts, design specifications, or descriptions.
+**`extract_text_from_screenshot`** - Extract and recognize text from screenshots using advanced OCR capabilities.
+**`diagnose_error_screenshot`** - Diagnose and analyze error messages, stack traces, and exception screenshots.
+**`understand_technical_diagram`** - Analyze and explain technical diagrams including architecture diagrams, flowcharts, UML, ER diagrams, and system design diagrams.
+**`analyze_data_visualization`** - Analyze data visualizations, charts, graphs, and dashboards to extract insights and trends.
+**`ui_diff_check`** - Compare two UI screenshots to identify visual differences and implementation discrepancies.
+**`analyze_image`** - General-purpose image analysis for scenarios not covered by specialized tools.
+**`analyze_video`** - Analyze video content using advanced AI vision models.
 
 ## Usage Pattern
 
-当用户请求匹配本技能能力时：
+When the user's request matches this skill's capabilities:
 
-**Step 1: 识别合适的工具** 从上面的列表中选择
+**Step 1: Identify the right tool** from the list above
 
-**Step 2: 生成工具调用** 使用 JSON 格式：
+**Step 2: Generate a tool call** in this JSON format:
 
 ```json
 {
@@ -89,104 +53,103 @@ description: 智谱 AI 多模态视觉分析能力，提供 UI 转代码、OCR�
 }
 ```
 
-**Step 3: 通过 bash 执行：**
+**Step 3: Execute via bash:**
 
 ```bash
 cd $SKILL_DIR
-python executor.py --call 'YOUR_JSON_HERE'
+uv run executor.py --call 'YOUR_JSON_HERE'
 ```
 
-⚠️ **重要**：将 `$SKILL_DIR` 替换为实际发现的技能目录路径。
+⚠️ **重要**: Replace $SKILL_DIR with the actual discovered path of this skill directory.
 
 ## Getting Tool Details
 
-如果需要特定工具的详细参数信息：
+If you need detailed information about a specific tool's parameters:
 
 ```bash
 cd $SKILL_DIR
-python executor.py --describe tool_name
+uv run executor.py --describe tool_name
 ```
-
-这只会加载该工具的 schema，不会加载所有工具。
 
 ## Examples
 
-### Example 1: UI 截图转代码
-
-用户: "将这个 UI 截图转换为 React 代码"
-
-你的流程：
-1. 识别工具：`ui_to_artifact`
-2. 生成调用 JSON
-3. 执行：
+### Example 1: List all tools
 
 ```bash
 cd $SKILL_DIR
-python executor.py --call '{"tool": "ui_to_artifact", "arguments": {"image_source": "/path/to/screenshot.png", "output_type": "code", "prompt": "Generate React code with Tailwind CSS for this UI"}}'
+uv run executor.py --list
 ```
 
-### Example 2: OCR 提取代码
+### Example 2: Describe a tool
 
 ```bash
 cd $SKILL_DIR
-python executor.py --call '{"tool": "extract_text_from_screenshot", "arguments": {"image_source": "/path/to/code_screenshot.png"}}'
+uv run executor.py --describe tool_name
 ```
 
-### Example 3: 错误诊断
+### Example 3: Call a tool
 
 ```bash
 cd $SKILL_DIR
-python executor.py --call '{"tool": "diagnose_error_screenshot", "arguments": {"image_source": "/path/to/error_screenshot.png"}}'
+uv run executor.py --call '{"tool": "tool_name", "arguments": {"param1": "value"}}'
 ```
 
-### Example 4: 技术图表理解
+### Example 4: Show status
 
 ```bash
 cd $SKILL_DIR
-python executor.py --call '{"tool": "understand_technical_diagram", "arguments": {"image_source": "/path/to/architecture_diagram.png"}}'
+uv run executor.py --status
 ```
 
-### Example 5: UI 差异对比
+### Example 5: Show statistics
 
 ```bash
 cd $SKILL_DIR
-python executor.py --call '{"tool": "ui_diff_check", "arguments": {"image_path_1": "/path/to/design.png", "image_path_2": "/path/to/implementation.png"}}'
+uv run executor.py --stats
 ```
 
-### Example 6: 视频分析
+### Example 6: Show recent logs
 
 ```bash
 cd $SKILL_DIR
-python executor.py --call '{"tool": "analyze_video", "arguments": {"video_source": "/path/to/video.mp4"}}'
+uv run executor.py --logs 50
+```
+
+### Example 7: Filter logs by tool
+
+```bash
+cd $SKILL_DIR
+uv run executor.py --logs 100 --tool tool_name
+```
+
+### Example 8: Reset statistics
+
+```bash
+cd $SKILL_DIR
+uv run executor.py --reset-stats
 ```
 
 ## Error Handling
 
-如果 executor 返回错误：
-- 检查工具名称是否正确
-- 验证必需参数是否已提供
-- 确保 MCP 服务器可访问
-- 检查 API 密钥是否有效
+If the executor returns an error:
+- Check the tool name is correct
+- Verify required arguments are provided
+- Ensure the MCP server is accessible
+- Check API keys in mcp-config.json
 
 ## Performance Notes
 
-上下文使用对比：
+Context usage comparison:
 
-| 场景 | MCP (预加载) | Skill (动态) |
-|------|--------------|--------------|
-| 空闲 | 4000 tokens | 150 tokens |
-| 活跃 | 4000 tokens | 6000 tokens |
-| 执行中 | 4000 tokens | 0 tokens |
+| Scenario | MCP (preload) | Skill (dynamic) |
+|----------|---------------|-----------------|
+| Idle | 4000 tokens | 150 tokens |
+| Active | 4000 tokens | 5k tokens |
+| Executing | 4000 tokens | 0 tokens |
 
-节省：典型使用中节省约 96% 的上下文
-
-## Configuration
-
-本技能使用智谱 AI API，配置：
-- API Key: 已配置在 mcp-config.json
-- 模式: ZHIPU
+Savings: ~-25% reduction in typical usage
 
 ---
 
-*本技能由 zai-mcp-server MCP 服务器配置自动生成*
-*Generator: mcp_to_skill.py*
+*This skill was auto-generated from MCP server configuration*
+*Generator: mcp-to-skill (uv-managed)*

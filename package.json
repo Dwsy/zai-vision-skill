@@ -1,8 +1,9 @@
 {
-  "name": "skill-zai-mcp",
+  "name": "skill-zai-vision",
   "version": "1.0.0",
-  "description": "Claude Skill wrapper for zai-mcp MCP server",
+  "description": "Claude Skill wrapper for zai-vision MCP server (stdio)",
   "scripts": {
-    "setup": "pip install mcp"
+    "setup": "uv sync",
+    "run": "uv run executor.py"
   }
 }

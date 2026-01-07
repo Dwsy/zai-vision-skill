@@ -30,3 +30,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Environment configuration (sensitive data)
+mcp-config.json

@@ -1,11 +1,12 @@
 {
-  "name": "zai-mcp",
+  "name": "zai-vision",
+  "transport": "stdio",
   "command": "npx",
   "args": [
     "@z_ai/mcp-server"
   ],
   "env": {
-    "Z_AI_API_KEY": "YOUR_API_KEY_HERE",
+    "Z_AI_API_KEY": "c545d6c69cdb4c0db9da4d3f55ef2168.OwVTRAFaqgjDTtX1",
     "Z_AI_MODE": "ZHIPU"
   }
 }
