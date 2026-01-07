@@ -1,0 +1,8 @@
+{
+  "name": "skill-zai-mcp",
+  "version": "1.0.0",
+  "description": "Claude Skill wrapper for zai-mcp MCP server",
+  "scripts": {
+    "setup": "pip install mcp"
+  }
+}
