@@ -18,11 +18,11 @@
 ```bash
 cd ~/.pi/agent/skills/zai-vision
 
-# 安装依赖（推荐使用 uv）
-uv sync
+# 安装依赖
+pip install mcp
 
-# 或者手动安装依赖
-pip install -r requirements.txt
+# 或者使用 uv（可选）
+uv sync
 ```
 
 ## Configuration
@@ -54,19 +54,19 @@ cp mcp-config.example.json mcp-config.json
 
 ```bash
 cd ~/.pi/agent/skills/zai-vision
-uv run executor.py --list
+python3 executor.py --list
 ```
 
 ### Describe a tool
 
 ```bash
-uv run executor.py --describe ui_to_artifact
+python3 executor.py --describe ui_to_artifact
 ```
 
 ### Call a tool
 
 ```bash
-uv run executor.py --call '{
+python3 executor.py --call '{
   "tool": "ui_to_artifact",
   "arguments": {
     "image_source": "/path/to/image.png",
@@ -74,25 +74,6 @@ uv run executor.py --call '{
     "prompt": "Generate React code with Tailwind CSS"
   }
 }'
-```
-
-### Statistics and Logging
-
-```bash
-# 查看状态
-uv run executor.py --status
-
-# 查看统计
-uv run executor.py --stats
-
-# 查看日志
-uv run executor.py --logs 100
-
-# 按工具过滤日志
-uv run executor.py --logs 100 --tool ui_to_artifact
-
-# 重置统计
-uv run executor.py --reset-stats
 ```
 
 ## Tools
@@ -113,7 +94,7 @@ uv run executor.py --reset-stats
 ### Example 1: UI to Code
 
 ```bash
-uv run executor.py --call '{
+python3 executor.py --call '{
   "tool": "ui_to_artifact",
   "arguments": {
     "image_source": "/path/to/ui-screenshot.png",
@@ -126,7 +107,7 @@ uv run executor.py --call '{
 ### Example 2: Extract Text
 
 ```bash
-uv run executor.py --call '{
+python3 executor.py --call '{
   "tool": "extract_text_from_screenshot",
   "arguments": {
     "image_source": "/path/to/code-screenshot.png"
@@ -137,7 +118,7 @@ uv run executor.py --call '{
 ### Example 3: Diagnose Error
 
 ```bash
-uv run executor.py --call '{
+python3 executor.py --call '{
   "tool": "diagnose_error_screenshot",
   "arguments": {
     "image_source": "/path/to/error-screenshot.png"
@@ -148,7 +129,7 @@ uv run executor.py --call '{
 ### Example 4: Analyze Diagram
 
 ```bash
-uv run executor.py --call '{
+python3 executor.py --call '{
   "tool": "understand_technical_diagram",
   "arguments": {
     "image_source": "/path/to/architecture-diagram.png"
@@ -159,7 +140,7 @@ uv run executor.py --call '{
 ### Example 5: Analyze Video
 
 ```bash
-uv run executor.py --call '{
+python3 executor.py --call '{
   "tool": "analyze_video",
   "arguments": {
     "video_source": "/path/to/video.mp4"
@@ -178,27 +159,14 @@ uv run executor.py --call '{
 ## Features
 
 - ✅ **渐进式加载**: 仅在需要时加载工具定义，节省 96% 上下文
-- ✅ **统计追踪**: 记录所有工具调用、成功率和执行时间
-- ✅ **日志管理**: 详细的调用日志，支持按工具过滤
-- ✅ **多协议支持**: stdio/SSE/HTTP 传输协议
-- ✅ **依赖管理**: 使用 uv 进行标准化依赖管理
-- ✅ **可重现构建**: uv.lock 确保依赖版本一致性
+- ✅ **简化执行**: 直接使用 Python3，无需额外依赖管理
+- ✅ **可重现构建**: requirements.txt 确保依赖版本一致性
 
 ## Requirements
 
 - Python 3.10+
-- uv (推荐) 或 pip
+- mcp package: `pip install mcp`
 - 智谱 AI API Key
-
-### 安装 uv
-
-```bash
-# macOS/Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Windows
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
 
 ## API Key
 

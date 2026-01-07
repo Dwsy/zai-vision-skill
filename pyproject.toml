@@ -1,8 +1,0 @@
-[project]
-name = "zai-vision-executor"
-version = "1.0.0"
-description = "MCP executor for zai-vision skill (stdio)"
-requires-python = ">=3.10"
-dependencies = [
-    "mcp>=1.0.0",
-]
