@@ -1,5 +1,5 @@
 ---
-name: zai-mcp
+name: zai-skill
 description: 智谱 AI 多模态视觉分析能力，提供 UI 转代码、OCR、错误诊断、技术图表理解等 8 个工具
 ---
 
