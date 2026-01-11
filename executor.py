@@ -2,17 +2,26 @@
 """
 MCP Skill Executor (Simplified)
 ================================
-Minimal executor for zai-vision MCP server.
+Minimal executor for zai-vision MCP server with all logs suppressed.
 """
 
 import json
 import sys
 import asyncio
 import argparse
+import logging
+import os
 from pathlib import Path
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+
+# Suppress all logging
+logging.basicConfig(level=logging.CRITICAL)
+logging.getLogger().setLevel(logging.CRITICAL)
+
+# Open /dev/null for stderr to suppress all subprocess output
+NULL_FILE = open(os.devnull, 'w')
 
 
 async def list_tools(config):
@@ -23,7 +32,7 @@ async def list_tools(config):
         env=config.get("env")
     )
 
-    async with stdio_client(server_params) as (read_stream, write_stream):
+    async with stdio_client(server_params, errlog=NULL_FILE) as (read_stream, write_stream):
         async with ClientSession(read_stream, write_stream) as session:
             await session.initialize()
             response = await session.list_tools()
@@ -43,7 +52,7 @@ async def describe_tool(config, tool_name):
         env=config.get("env")
     )
 
-    async with stdio_client(server_params) as (read_stream, write_stream):
+    async with stdio_client(server_params, errlog=NULL_FILE) as (read_stream, write_stream):
         async with ClientSession(read_stream, write_stream) as session:
             await session.initialize()
             response = await session.list_tools()
@@ -59,14 +68,14 @@ async def describe_tool(config, tool_name):
 
 
 async def call_tool(config, tool_name, arguments):
-    """Call a specific tool."""
+    """Call a specific tool with all logs suppressed."""
     server_params = StdioServerParameters(
         command=config["command"],
         args=config.get("args", []),
         env=config.get("env")
     )
 
-    async with stdio_client(server_params) as (read_stream, write_stream):
+    async with stdio_client(server_params, errlog=NULL_FILE) as (read_stream, write_stream):
         async with ClientSession(read_stream, write_stream) as session:
             await session.initialize()
             response = await session.call_tool(tool_name, arguments)
@@ -111,21 +120,22 @@ async def main():
                 call_data.get("arguments", {})
             )
 
-            # Format result
+            # Format result - extract text content only
             if isinstance(result, list):
                 for item in result:
                     if hasattr(item, 'text'):
                         print(item.text)
+                    elif hasattr(item, '__dict__'):
+                        print(json.dumps(item.__dict__, indent=2, ensure_ascii=False))
                     else:
-                        print(json.dumps(item.__dict__ if hasattr(item, '__dict__') else item, indent=2))
+                        print(json.dumps(item, indent=2, ensure_ascii=False))
             else:
-                print(json.dumps(result.__dict__ if hasattr(result, '__dict__') else result, indent=2))
+                print(json.dumps(result.__dict__ if hasattr(result, '__dict__') else result, indent=2, ensure_ascii=False))
         else:
             parser.print_help()
 
         # Explicitly flush
         sys.stdout.flush()
-        sys.stderr.flush()
 
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
