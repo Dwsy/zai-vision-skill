@@ -1,6 +1,6 @@
 ---
 name: zai-vision
-description: Dynamic access to zai-vision MCP server (8 tools, transport: stdio)
+description: "Dynamic access to zai-vision MCP server (8 tools, transport: stdio)"
 ---
 
 # zai-vision Skill
